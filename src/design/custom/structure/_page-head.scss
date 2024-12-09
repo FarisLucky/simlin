@@ -1,0 +1,23 @@
+// 
+// Page-title
+// 
+
+.page-title-box {
+    padding-bottom: $grid-gutter-width;
+    padding: .8rem 1rem;
+    background-color: white;
+    margin-bottom: $grid-gutter-width;
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+    border-radius: 5px;
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+    }
+
+    h4 {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 12px !important;
+    }
+}

@@ -1,0 +1,305 @@
+@use "sass:math";
+
+@import "custom/components/animation";
+
+.modal-backdrop {
+    opacity: 0.5;
+}
+
+.modal-header,
+.alert {
+    .close {
+        padding: 0.3rem 1.75rem;
+        background: transparent;
+        border: 0;
+        font-size: 25px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        opacity: 0.4;
+        width: 1em;
+        height: 1em;
+        z-index: 2;
+
+        button {
+            display: none;
+        }
+    }
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.vhd__datepicker__input {
+    height: $input-height !important;
+    line-height: $input-height !important;
+}
+
+.form-check {
+    .custom-control-input {
+        border-radius: 0.25em;
+        float: left;
+        margin: 3px 3px 3px -19px !important;
+    }
+}
+
+.check-group {
+    input {
+        position: absolute;
+        clip: rect(0, 0, 0, 0);
+        pointer-events: none;
+    }
+}
+
+.vue-simple-drawer {
+    background: $gray-100 !important;
+    color: $gray-800 !important;
+
+    .close-btn {
+        .leftright,
+        .rightleft {
+            width: 20px !important;
+            background-color: $gray-600 !important;
+        }
+    }
+}
+
+body {
+    * {
+        outline: none;
+    }
+}
+
+.b-form-btn-label-control {
+    padding: 0;
+    border: none;
+
+    > .btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+}
+
+.vue-simple-drawer {
+    // default style
+    padding: 20px;
+    color: $--simple-drawer-fg-color;
+    background: $--simple-drawer-bg-color;
+    // common
+    position: fixed;
+    overflow: auto;
+
+    &.closeable {
+        padding-top: 40px;
+    }
+
+    &.left {
+        left: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    &.right {
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    &.up {
+        top: 0;
+        left: 0;
+        right: 0;
+    }
+
+    &.down {
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+
+    .close-btn {
+        width: $--simple-drawer-close-width;
+        height: $--simple-drawer-close-width;
+        position: absolute;
+        right: 0;
+        top: 20px;
+        transform: translate(-50%, -50%);
+        color: currentColor;
+        font-size: 20px;
+        cursor: pointer;
+        user-select: none;
+
+        .leftright {
+            height: 4px;
+            width: $--simple-drawer-close-width;
+            position: absolute;
+            margin-top: math.div($--simple-drawer-close-width, 2);
+            background-color: $--simple-drawer-softorange;
+            border-radius: 2px;
+            transform: rotate(45deg);
+            transition: all 0.3s ease-in;
+        }
+
+        .rightleft {
+            height: 4px;
+            width: $--simple-drawer-close-width;
+            position: absolute;
+            margin-top: math.div($--simple-drawer-close-width, 2);
+            background-color: $--simple-drawer-softorange;
+            border-radius: 2px;
+            transform: rotate(-45deg);
+            transition: all 0.3s ease-in;
+        }
+
+        .close {
+            margin: 60px 0 0 5px;
+            position: absolute;
+        }
+
+        &:hover .leftright {
+            transform: rotate(-45deg);
+            background-color: $--simple-drawer-tomatored;
+        }
+
+        &:hover .rightleft {
+            transform: rotate(45deg);
+            background-color: $--simple-drawer-tomatored;
+        }
+    }
+}
+
+.mask {
+    position: fixed;
+    background: grey;
+    opacity: 0.5;
+    width: 100%;
+    left: 0;
+    top: 0;
+    height: 100%;
+}
+
+.slider-tooltip,
+.slider-connect {
+    background: $primary;
+}
+
+// modal
+.v-modal-custom {
+    .modal-dialog {
+        .modal-content {
+            z-index: 1056;
+        }
+    }
+
+    .v-modal-footer {
+        padding: var(--vz-modal-padding) 0 0;
+    }
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+.body-bg {
+    background-color: $body-bg;
+}
+.box-shadow-cs {
+    box-shadow:
+        rgba(0, 0, 0, 0.1) 0px 1px 3px 0px,
+        rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    // background-color: white;
+}
+button,
+label,
+select,
+textarea,
+input {
+    font-size: 12px !important;
+}
+.vs__dropdown-toggle {
+    padding: 0.3rem 0.25rem !important;
+}
+// .vue3-easy-data-table__main {
+//     font-weight: 550;
+//     font-size: 12px;
+//     min-height: auto;
+// }
+
+/* Basic fade in/out with a scale and blur effect */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.slide-fade-enter-active {
+    transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+    transform: translateX(15px);
+    opacity: 0;
+}
+.flatpickr-calendar {
+    font-size: 12px !important;
+}
+
+input:read-only,
+input:read-only:focus {
+    background-color: tint-color($primary-300, 90%); /* Light grey background */
+    color: $primary-950; /* Grey text color */
+    border: 1px solid $primary-200; /* Light border */
+}
+.bg-primary-200 {
+    background-color: $primary-200;
+}
+.bg-primary-300 {
+    background-color: $primary-300;
+}
+.bg-primary-400 {
+    background-color: $primary-400;
+}
+// .vue3-easy-data-table__body {
+//     font-family: $font-family-monospace !important;
+//     font-optical-sizing: auto;
+//     font-weight: 450;
+//     font-style: normal;
+// }
+
+.customize-table {
+    --easy-table-header-font-size: 12px;
+    --easy-table-body-row-font-size: 11px;
+    --easy-table-body-item-padding: 7px 10px;
+    letter-spacing: .5px;
+    font-family: $font-family-monospace !important;
+        font-weight: 450;
+    // --easy-table-border: none;
+    // --easy-table-row-border: 1px dashed rgba(20, 76, 120, .5);
+}
+
+/* fade up */
+.fade-y-enter,
+.fade-y-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-y-enter-active,
+.fade-y-leave-active {
+  transition: opacity 0.3s, transform 0.5s;
+}
