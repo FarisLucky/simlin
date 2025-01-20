@@ -178,7 +178,7 @@
                                 <input
                                     type="text"
                                     class="form-control border-1 border-danger"
-                                    :value="form.created_by_name"
+                                    :value="form.ket"
                                     readonly
                                 />
                             </div>

@@ -45,7 +45,10 @@
                         <td>
                             <div class="text-end">
                                 <button
-                                    v-if="status === STATUS_DAFTAR.PENGAJUAN"
+                                    v-if="
+                                        status === STATUS_DAFTAR.PENGAJUAN &&
+                                        isSuperAdmin
+                                    "
                                     class="btn btn-soft-primary w-100"
                                     @click.prevent="
                                         onSubmit({
@@ -60,7 +63,10 @@
                                     Terima
                                 </button>
                                 <button
-                                    v-else-if="status === STATUS_DAFTAR.TERIMA"
+                                    v-else-if="
+                                        status === STATUS_DAFTAR.TERIMA &&
+                                        isSuperAdmin
+                                    "
                                     class="btn btn-soft-primary w-100"
                                     @click.prevent="
                                         onSubmit({
@@ -99,7 +105,7 @@
     </b-modal>
 </template>
 <script>
-import { STATUS_DAFTAR } from "@/helpers/utils";
+import { ROLE, STATUS_DAFTAR } from "@/helpers/utils";
 import { daftarService } from "@/services/DaftarService";
 import { transLinenDetailService } from "@/services/TransLinenDetailService";
 import { spinnerMethods, toastMethods } from "@/state/helpers";
@@ -116,6 +122,11 @@ export default {
             err: [],
             STATUS_DAFTAR,
         };
+    },
+    computed: {
+        isSuperAdmin() {
+            return this.$store.state.auth.data.role === ROLE.SUPER_ADMIN;
+        },
     },
     methods: {
         ...spinnerMethods,

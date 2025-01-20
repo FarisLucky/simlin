@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\RekapController;
-use App\Http\Controllers\Web\PdfController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,3 +20,4 @@ Route::get('/', function () {
 });
 
 Route::get('/rekap/linen/excel', [RekapController::class, 'harianLinen'])->name('rekap.harian_linen');
+Route::get('/rekap/mutu/excel', [RekapController::class, 'mutuLinen'])->name('rekap.mutu_linen');

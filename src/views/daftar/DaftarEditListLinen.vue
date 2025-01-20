@@ -225,9 +225,9 @@
                 <template #item-aksi="item">
                     <BButton
                         v-if="
-                            (item.daftar.status === STATUS_DAFTAR.PENGAJUAN &&
-                                item.daftar.created_by_name ===
-                                    $store.state.auth.data.username) ||
+                            (item.daftar?.status === STATUS_DAFTAR.PENGAJUAN &&
+                                item.daftar.created_by ===
+                                    $store.state.auth.data.id) ||
                             isSuperAdmin
                         "
                         type="button"

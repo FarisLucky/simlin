@@ -39,6 +39,7 @@ export default {
         Layout,
         PageHeader,
         RekapLinen: defineAsyncComponent(() => import("./RekapLinen.vue")),
+        RekapMutu: defineAsyncComponent(() => import("./RekapMutu.vue")),
     },
     data() {
         return {
@@ -54,10 +55,16 @@ export default {
                 },
             ],
             list: [
+                // {
+                //     title: "Linen",
+                //     component: "RekapLinen",
+                //     route: "RekapLinen",
+                //     //   for: this.isKaBid || this.isKaSub || this.isDir || this.isSuperAdmin,
+                // },
                 {
-                    title: "Linen",
-                    component: "RekapLinen",
-                    route: "RekapLinen",
+                    title: "Mutu",
+                    component: "RekapMutu",
+                    route: "mutu",
                     //   for: this.isKaBid || this.isKaSub || this.isDir || this.isSuperAdmin,
                 },
             ],

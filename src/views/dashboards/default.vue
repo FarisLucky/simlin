@@ -200,9 +200,9 @@ export default {
                     <BCard no-body>
                         <BCardBody>
                             <div class="d-flex justify-content-between">
-                                <div class="mb-1">Harian Pengajuan</div>
+                                <div class="mb-1">Belum Ditangani</div>
                                 <div class="mb-1">
-                                    <h4>{{ statistik?.sum_pengajuan ?? 0 }}</h4>
+                                    <h4>{{ statistik?.blm_selesai ?? 0 }}</h4>
                                 </div>
                             </div>
                         </BCardBody>
@@ -212,7 +212,7 @@ export default {
                     <BCard no-body>
                         <BCardBody>
                             <div class="d-flex justify-content-between">
-                                <div class="mb-1">Harian Selesai</div>
+                                <div class="mb-1">Alat & Linen Tertangani</div>
                                 <div class="mb-1">
                                     <h4>{{ statistik?.sum_selesai ?? 0 }}</h4>
                                 </div>

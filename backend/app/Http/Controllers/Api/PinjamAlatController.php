@@ -6,14 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\ApiResponse;
 use App\Http\Requests\StorePinjamAlatRequest;
 use App\Models\Catatan;
-use App\Models\Daftar;
 use App\Models\PinjamAlat;
 use App\Models\User;
-use App\Services\AlatService;
 use App\Services\PinjamService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Ramsey\Uuid\Uuid;
 
 class PinjamAlatController extends Controller
 {

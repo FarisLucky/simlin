@@ -72,7 +72,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('m-alat', MAlatController::class)->names('alat');
     Route::get('m-alat/data/all', [MAlatController::class, 'data'])->name('alat.line');
 
-
     /**
      * Daftar route
      **/
@@ -82,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('daftar/ajukan/{kode}', [DaftarController::class, 'updateAjukan'])->name('daftar.update_ajukan');
     Route::get('daftar-grafik/line', [DaftarController::class, 'grafik'])->name('daftar.grafik');
     Route::get('daftar-statistik', [DaftarController::class, 'statistik'])->name('daftar.statistik');
+
     /**
      * Trans Linen route
      **/
@@ -124,6 +124,17 @@ Route::middleware('auth:sanctum')->group(function () {
      **/
     Route::get('history/daftar', [HDaftarController::class, 'index'])->name('history_daftar.index');
 
+    /**
+     * Kontrol route
+     *
+     **/
+    Route::prefix('/dashboard')->name('dashboard.')->group(function () {
+        Route::get('stat', [DashboardController::class, 'index'])
+            ->name('index');
+        Route::get('line', [DashboardController::class, 'line'])
+            ->name('line');
+    });
+
 });
 
 /**
@@ -138,15 +149,3 @@ Route::post('login', [LoginController::class, 'login'])->name('auth.login');
  **/
 Route::apiResource('mutu', MutuController::class)->names('mutu');
 Route::get('mutu/{kode}/daftar', [MutuController::class, 'showByDaftar'])->name('mutu.show-by-daftar');
-
-
-/**
- * KONTROL route
- *
- **/
-Route::prefix('/dashboard')->name('dashboard.')->group(function () {
-    Route::get('stat', [DashboardController::class, 'index'])
-        ->name('index');
-    Route::get('line', [DashboardController::class, 'line'])
-        ->name('line');
-});

@@ -130,6 +130,7 @@
                         :loading="loading"
                         :headers="columns"
                         :items="rows"
+                        buttons-pagination
                         show-index
                         table-class-name="customize-table"
                         must-sort
@@ -219,6 +220,12 @@
                             >
                                 <i class="bx bx-trash"></i>
                             </BButton>
+                        </template>
+                        <template #loading>
+                            <img
+                                src="@/assets/images/loader.gif"
+                                style="width: 100%; height: 40px"
+                            />
                         </template>
                     </EasyDataTable>
                 </div>
@@ -342,12 +349,10 @@ export default {
         ...toastMethods,
         ...daftarMethods,
         async fetchData() {
-            this.show();
-            this.isLoading = true;
+            this.loading = true;
             let query = queryString.stringify(
                 Object.assign({}, this.filter, this.paginateOpt)
             );
-            console.log("q" + this.filter.search);
 
             const [err, resp] = await daftarService.all(query);
             if (err) {
@@ -355,12 +360,10 @@ export default {
                     title: "Gagal",
                     msg: err.response?.data?.errors,
                 });
-                this.isLoading = false;
+                this.loading = true;
 
-                this.hide();
                 return;
             }
-            this.hide();
             let result = resp.data;
             this.rows = result.data;
             this.rowsLength = result.total;

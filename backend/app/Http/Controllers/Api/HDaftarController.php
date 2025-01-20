@@ -29,6 +29,9 @@ class HDaftarController extends Controller
             $daftars = Daftar::with([
                 'unit' => function ($query) {
                     $query->select('kode', 'nama');
+                },
+                'mutu' => function ($query) {
+                    $query->select('kode_daftar');
                 }
             ])
                 ->select([

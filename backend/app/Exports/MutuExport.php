@@ -4,6 +4,7 @@ namespace App\Exports;
 
 use App\Models\Daftar;
 use App\Models\Linen;
+use App\Models\Mutu;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ use Maatwebsite\Excel\Concerns\WithTitle;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class LinenExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize, WithHeadingRow, WithStartRow, WithTitle
+class MutuExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize, WithHeadingRow, WithStartRow, WithTitle
 {
 
     public $params;
@@ -29,9 +30,9 @@ class LinenExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize,
 
     public function view(): View
     {
-        // dd('test');
         $start = Carbon::make($this->params['start']);
         $end = Carbon::make($this->params['end']);
+        $units = $this->params['units'];
 
         $params = [
             'start' => $start->format('Y-m-d'),
@@ -40,37 +41,42 @@ class LinenExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize,
 
         DB::statement('SET sql_mode=""');
 
-        $linens = Linen::selectRaw('DATE(selesai) as selesai_cast, kd_unit, m_unit.nama as nama_unit')
-            ->addSelect([
-                'sum_terima' => DB::table('linen as ln')
-                    ->select(
-                        DB::raw('SUM(linen_detail.jml_terima)'),
-                    )
-                    ->leftJoin('linen_detail','ln.nota','=','linen_detail.nota_linen')
-                    ->whereColumn('ln.kd_unit','linen.kd_unit'),
+        $mutu = Mutu::leftJoin('daftar', 'daftar.kode', '=', 'mutu.kode_daftar')
+            ->leftJoin('m_unit', 'm_unit.kode', '=', 'daftar.kd_unit')
+            ->when(!is_null($start) && !is_null($end), function ($query) use ($start, $end) {
+                $query->whereBetween('mutu.tgl_daftar', [
+                    $start->format('Y-m-d'),
+                    $end->format('Y-m-d')
+                ]);
+            })
+            ->when(!is_null($units) && count($units) > 0, function ($query) use ($units) {
+                $all = false;
+                foreach ($units as $unit) {
+                    if ($unit === 'all') {
+                        $all = true;
+                        break;
+                    }
+                }
+                if (!$all) {
+                    $query->whereIn('daftar.kd_unit', $units);
+                }
+            })
+            ->get([
+                'mutu.id',
+                'mutu.kode_daftar',
+                'mutu.tgl_daftar',
+                'mutu.tdk_noda',
+                'mutu.tdk_bau',
+                'mutu.tdk_pudar',
+                'mutu.tdk_rapi',
+                'mutu.tdk_kualitas',
+                'mutu.jml_rusak',
+                'mutu.ttl',
+                DB::raw('m_unit.nama as nama_unit'),
+            ]);
 
-                'sum_kembali' => DB::table('linen as ln')
-                    ->select(
-                        DB::raw('SUM(jml_kembali) as linen_kembali'),
-                    )
-                    ->leftJoin('linen_detail','ln.nota','=','linen_detail.nota_linen')
-                    ->whereColumn('ln.kd_unit','linen.kd_unit'),
 
-                'sum_akhir' => DB::table('linen as ln')
-                    ->select(
-                        DB::raw('SUM(jml_akhir) as linen_akhir'),
-                    )
-                    ->leftJoin('linen_detail','ln.nota','=','linen_detail.nota_linen')
-                    ->whereColumn('ln.kd_unit','linen.kd_unit'),
-            ])
-            ->join('m_unit', 'm_unit.kode', '=', 'linen.kd_unit')
-            ->where('status', LINEN::SELESAI)
-            ->groupBy('selesai_cast')
-            ->groupBy('kd_unit')
-            ->get();
-
-
-        return view('linen_export', compact('linens'), $params);
+        return view('mutu_export', compact('mutu'), $params);
     }
 
     public function drawings()
@@ -106,6 +112,6 @@ class LinenExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize,
     }
     public function title(): string
     {
-        return "Rekap Linen";
+        return "Rekap Mutu";
     }
 }

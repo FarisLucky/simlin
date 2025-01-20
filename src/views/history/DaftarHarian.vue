@@ -87,6 +87,7 @@
                         :loading="loading"
                         :headers="columns"
                         :items="rows"
+                        buttons-pagination
                         show-index
                         table-class-name="no-border-table customize-table"
                         must-sort
@@ -108,6 +109,17 @@
                         </template>
                         <template #item-kode="item">
                             <strong>{{ item.kode }}</strong>
+                        </template>
+                        <template #item-mutu="item">
+                            <strong
+                                v-if="item.mutu !== null"
+                                class="text-success"
+                            >
+                                <i
+                                    class="bx bx-badge-check"
+                                    style="font-size: 14px"
+                                ></i>
+                            </strong>
                         </template>
                         <template #item-aksi="item">
                             <BButton
@@ -138,6 +150,12 @@
                             >
                                 <i class="bx bx-purchase-tag-alt"></i>
                             </BButton>
+                        </template>
+                        <template #loading>
+                            <img
+                                src="@/assets/images/loader.gif"
+                                style="width: 100%; height: 40px"
+                            />
                         </template>
                     </EasyDataTable>
                 </div>
@@ -174,25 +192,14 @@ export default {
         return {
             columns: [
                 {
-                    text: "Nota",
-                    value: "kode",
-                    sortable: true,
-                },
-                {
-                    text: "Unit",
-                    value: "unit",
-                    sortable: false,
-                    fixed: true,
-                },
-                {
                     text: "Pengajuan",
                     value: "pengajuan_cast",
                     sortable: false,
                 },
                 {
-                    text: "Selesai",
-                    value: "selesai_cast",
-                    sortable: false,
+                    text: "Nota",
+                    value: "kode",
+                    sortable: true,
                 },
                 {
                     text: "Permintaan",
@@ -210,6 +217,21 @@ export default {
                     sortable: false,
                 },
                 {
+                    text: "Unit",
+                    value: "unit",
+                    sortable: false,
+                },
+                {
+                    text: "Selesai",
+                    value: "selesai_cast",
+                    sortable: false,
+                },
+                {
+                    text: "Mutu",
+                    value: "mutu",
+                    sortable: false,
+                },
+                {
                     text: "Aksi",
                     value: "aksi",
                     sortable: false,
@@ -221,6 +243,7 @@ export default {
             loading: false,
             JENIS,
             STATUS_DAFTAR,
+            crntpage: 0,
         };
     },
     created() {
@@ -245,8 +268,7 @@ export default {
         ...toastMethods,
         ...daftarMethods,
         async fetchData() {
-            this.show();
-            this.isLoading = true;
+            this.loading = true;
             let query = queryString.stringify(
                 Object.assign({}, this.filter, this.paginateOpt)
             );
@@ -257,15 +279,16 @@ export default {
                     title: "Gagal",
                     msg: err.response?.data?.errors,
                 });
-                this.isLoading = false;
+                this.loading = false;
 
-                this.hide();
                 return;
             }
-            this.hide();
             let result = resp.data;
             this.rows = result.data;
             this.rowsLength = result.total;
+            // this.paginateOpt.page = result.current_page;
+            // this.crntpage = result.current_page;
+            console.log(result);
             this.loading = false;
         },
         onShow({ kode, jenis }) {

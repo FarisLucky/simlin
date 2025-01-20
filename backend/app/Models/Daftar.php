@@ -47,7 +47,7 @@ class Daftar extends Model implements SearchInterface, SortInterface
         'updated_by_name',
     ];
 
-    protected $appends = ['jenis_cast', 'pengajuan_cast','terima_cast','kembalikan_cast','status_cast','selesai_cast'];
+    protected $appends = ['jenis_cast', 'pengajuan_cast', 'terima_cast', 'kembalikan_cast', 'status_cast', 'selesai_cast','created_at_cast'];
 
     public $casts = [
         'created_at' => 'datetime',
@@ -134,14 +134,9 @@ class Daftar extends Model implements SearchInterface, SortInterface
         });
     }
 
-    public function getCreatedAtAttribute($val)
+    public function getCreatedAtCastAttribute()
     {
-        return !is_null($val) ? Carbon::make($val)->format('d-m-Y H:i') : '-';
-    }
-
-    public function getUpdatedAtAttribute($val)
-    {
-        return !is_null($val) ? Carbon::make($val)->format('d-m-Y H:i') : '-';
+        return !is_null($this->created_at) ? Carbon::make($this->created_at)->format('d-m-Y H:i') : '-';
     }
 
     public function getPengajuanCastAttribute()
@@ -223,18 +218,26 @@ class Daftar extends Model implements SearchInterface, SortInterface
 
         static::deleted(function($daftar){
             if($daftar->jenis === self::LINEN && count($daftar->linen) > 0) {
-                foreach ($daftar->linen as $linen) {
-                    $daftar->linen->delete();
+                if(count($daftar->linen) > 0) {
+                    foreach ($daftar->linen as $linen) {
+                        $linen->delete();
+                    }
                 }
+
             } else if($daftar->jenis === self::ALAT && count($daftar->linen) > 0) {
-                $daftar->pinjamAlat->each->delete();
+                if(count($daftar->pinjamAlat) > 0) {
+                    foreach ($daftar->pinjamAlat as $alat) {
+                        $alat->delete();
+                    }
+                }
+
             }
         });
     }
 
-    public function linen(): HasMany
+    public function linen(): HasOne
     {
-        return $this->hasMany(Linen::class, 'kode_daftar','kode');
+        return $this->hasOne(Linen::class, 'kode_daftar','kode');
     }
 
     public function linenDetail(): HasMany
@@ -251,9 +254,12 @@ class Daftar extends Model implements SearchInterface, SortInterface
     {
         return $this->hasMany(PinjamAlatDetail::class, 'kode_daftar','kode');
     }
-
     public function unit(): BelongsTo
     {
         return $this->belongsto(MUnit::class, 'kd_unit','kode');
+    }
+    public function mutu(): HasOne
+    {
+        return $this->hasOne(Mutu::class, 'kode_daftar', 'kode');
     }
 }

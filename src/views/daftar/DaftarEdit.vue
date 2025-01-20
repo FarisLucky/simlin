@@ -1,7 +1,7 @@
 <template>
     <BCard no-body class="p-1">
         <BCardBody class="border-bottom border-dashed border-2 py-2 px-3">
-            <div class="p-1">
+            <div v-if="result" class="p-1">
                 <form @submit.prevent="onUpdateSimpan(form)">
                     <BRow class="g-2 align-items-end">
                         <BCol sm="12">
@@ -13,20 +13,20 @@
                                         class="rounded"
                                         :class="{
                                             'text-info':
-                                                form.status ===
+                                                form?.status ===
                                                 STATUS_DAFTAR.NOTA,
                                             'text-primary':
-                                                form.status ===
+                                                form?.status ===
                                                 STATUS_DAFTAR.PENGAJUAN,
                                             'text-primary':
-                                                form.status ===
+                                                form?.status ===
                                                 STATUS_DAFTAR.TERIMA,
                                             'text-primary':
-                                                form.status ===
+                                                form?.status ===
                                                 STATUS_DAFTAR.DIKEMBALIKAN,
                                         }"
                                     >
-                                        {{ form.status_cast }}
+                                        {{ form?.status_cast }}
                                     </strong>
                                 </h5>
                             </div>
@@ -57,11 +57,22 @@
                         </BCol>
                         <BCol cols="6" md="2">
                             <div class="mb-1">
+                                <label class="mb-1">Dibuat</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :value="form?.created_at_cast"
+                                    readonly
+                                />
+                            </div>
+                        </BCol>
+                        <BCol cols="6" md="2">
+                            <div class="mb-1">
                                 <label class="mb-1">Nota</label>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    :value="form.kode"
+                                    :value="form?.kode"
                                     readonly
                                 />
                                 <span v-if="err?.kode" class="text-danger">
@@ -75,7 +86,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    :value="form.pengajuan_cast"
+                                    :value="form?.pengajuan_cast"
                                     readonly
                                 />
                                 <span
@@ -92,7 +103,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    :value="form.terima_cast"
+                                    :value="form?.terima_cast"
                                     readonly
                                 />
                                 <span
@@ -109,7 +120,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    :value="form.kembalikan_cast"
+                                    :value="form?.kembalikan_cast"
                                     readonly
                                 />
                                 <span
@@ -134,7 +145,7 @@
                                     v-else
                                     type="text"
                                     class="form-control"
-                                    :value="form.unit"
+                                    :value="form?.unit"
                                     readonly
                                 />
                             </div>
@@ -145,7 +156,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    :value="form.created_by_name"
+                                    :value="form?.created_by_name"
                                     readonly
                                 />
                             </div>
@@ -201,7 +212,7 @@
                         <BCol
                             v-if="
                                 isSuperAdmin ||
-                                form.created_by === $store.state.auth.data.id
+                                form?.created_by === $store.state.auth.data.id
                             "
                         >
                             <div class="mb-1">
@@ -230,7 +241,7 @@
                 <DaftarEditFormLinen
                     ref="DaftarEditFormLinenRef"
                     :status="form?.status"
-                    :nota="form?.nota"
+                    :nota="form?.linen?.nota ?? '-'"
                     :pengajuan="form?.pengajuan"
                     :terima="form?.terima"
                     :kembalikan="form?.kembalikan"
@@ -291,7 +302,10 @@ export default {
     },
     data() {
         return {
-            form: {},
+            form: {
+                ket: "",
+            },
+            result: false,
             err: [],
             units: [],
             JENIS,
@@ -359,9 +373,10 @@ export default {
             this.hide();
             this.form = resp.data;
             this.form.unit = resp.data?.unit?.nama;
-            if (this.form.jenis === JENIS.LINEN) {
+            if (this.form?.jenis === JENIS.LINEN) {
                 this.form.berat = resp.data?.linen?.berat;
             }
+            this.result = true;
         },
         onSubmit(form) {
             this.$refs.simpanModalRef.modalForm.kode = form.kode;
@@ -411,6 +426,10 @@ export default {
             }
             this.hide();
             this.fetchData();
+            this.toastSuccess({
+                title: "Berhasil",
+                msg: "OK",
+            });
         },
         async getUnits() {
             this.show();

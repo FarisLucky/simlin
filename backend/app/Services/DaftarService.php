@@ -22,18 +22,25 @@ class DaftarService
         return Daftar::create($payload);
     }
 
-    public static function genKode()
+    public static function genKode($jenis)
     {
-        $mAlat = Daftar::latest()->first(['kode']);
-        $kode = now()->format('ymHi-');
+        $kdDaftar = Daftar::latest()
+            ->first(['kode']);
+
+        if ($jenis === Daftar::LINEN) {
+            $kode = 'L' . now()->format('ym-');
+        } else {
+            $kode = 'A' . now()->format('ym-');
+        }
+
         $result = 0;
 
-        if (is_null($mAlat)) {
+        if (is_null($kdDaftar)) {
             $result = 1;
         } else {
-            $lastInc = explode("-", $mAlat->kode);
+            $lastInc = explode("-", $kdDaftar->kode);
 
-            $result = ("$lastInc[0]-" === $kode) ? $lastInc[1] + 1 : 1;
+            $result = intval($lastInc[1]) + 1;
         }
 
         return $kode . $result;

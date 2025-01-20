@@ -172,7 +172,7 @@ export default [
     ],
   },
   {
-    path: "/rekap",
+    path: "/rekap/:jenis?",
     name: "Rekap",
     meta: {
       authRequired: false,

@@ -14,7 +14,6 @@ use App\Services\LinenService;
 use App\Services\PinjamService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class DaftarController extends Controller
 {
@@ -85,8 +84,9 @@ class DaftarController extends Controller
 
             DB::beginTransaction();
 
-            $kode = DaftarService::genKode();
             $user = auth()->user();
+            $jenis = $request->jenis;
+            $kode = DaftarService::genKode(strtoupper($jenis));
 
             $payload = [
                 'kode' => $kode,
@@ -97,7 +97,7 @@ class DaftarController extends Controller
             $daftarService = new DaftarService();
             $daftarStore = $daftarService->store($payload);
 
-            if ($daftarStore && strtoupper($request->jenis) === Daftar::LINEN) {
+            if ($daftarStore && strtoupper($jenis) === Daftar::LINEN) {
                 $linenService = new LinenService();
                 $payload['kode_daftar'] = optional($daftarStore)->kode;
                 $payload['nama'] = Daftar::LINEN;
@@ -157,6 +157,8 @@ class DaftarController extends Controller
     public function update(Request $request, $kode)
     {
         try {
+            DB::beginTransaction();
+
             $daftar = Daftar::where('kode', $kode)->first();
             $unit = MUnit::where('nama', $request->unit)->first(['kode', 'nama']);
             $daftar->kd_unit = $unit->kode;
@@ -165,18 +167,22 @@ class DaftarController extends Controller
                 $daftar->ket = $request->ket;
             }
             if ($daftar->jenis === Daftar::LINEN) {
-                Log::info('test linen', [$daftar]);
-                $daftar->load('linen');
-                $daftar->linen->update([
-                    'berat' => $request->berat
-                ]);
+                $linen = Linen::where('kode_daftar', $kode)->first();
+                if (!is_null($linen)) {
+                    $linen->update([
+                        'berat' => $request->berat
+                    ]);
+                }
             }
             $daftar->save();
 
+            DB::commit();
+
             return $this->okApiResponse($daftar, 'Berhasil dimuat');
         } catch (\Throwable $th) {
+            DB::rollBack();
 
-            return $this->errorApiResponse($th->getMessage());
+            return $this->errorApiResponse($th->getTraceAsString());
         }
     }
 
@@ -222,11 +228,17 @@ class DaftarController extends Controller
                     case Daftar::SELESAI:
                         $payload['selesai'] = now();
                         $payload['status'] = Daftar::SELESAI;
-                        $daftar->linen->update([
-                            'status' => Linen::SELESAI,
-                            'selesai' => now()
-                        ]);
+                        $daftar->linen->update(['status' => PinjamAlat::SELESAI]);
+                        // if (count($daftar->linen) > 0) {
+                        //     foreach ($daftar->linen as $linen) {
+                        //         $linen->update(['status' => PinjamAlat::SELESAI]);
+                        //     }
+                        // }
                         break;
+                        // $daftar->linen->update([
+                        //     'status' => Linen::SELESAI,
+                        //     'selesai' => now()
+                        // ]);
                 }
             } else if ($daftar->jenis === Daftar::ALAT) {
                 switch ($request->progress) {
@@ -246,7 +258,11 @@ class DaftarController extends Controller
                     case Daftar::SELESAI:
                         $payload['selesai'] = now();
                         $payload['status'] = Daftar::SELESAI;
-                        $daftar->pinjamAlat->update(['status' => PinjamAlat::SELESAI]);
+                        if (count($daftar->pinjamAlat) > 0) {
+                            foreach ($daftar->pinjamAlat as $pinjam) {
+                                $pinjam->update(['status' => PinjamAlat::SELESAI]);
+                            }
+                        }
                         break;
                         // case Daftar::SELESAI:
                         //     $payload['selesai'] = now();
@@ -349,57 +365,24 @@ class DaftarController extends Controller
             /**
              * Grafik card
              */
-            $daftar = DB::table('daftar')
-                ->select([
-                    'sum_pengajuan' => DB::table('daftar')
-                        ->selectRaw('COUNT(id)')
-                        ->where('status', Daftar::PENGAJUAN)
-                        ->where('pengajuan', now()->format('Y-m-d')),
-                    'sum_selesai' => DB::table('daftar')
-                        ->selectRaw('COUNT(id)')
-                        ->where('status', Daftar::SELESAI)
-                        ->where('pengajuan', now()->format('Y-m-d')),
-                ])
-                ->first();
-            // return $this->okApiResponse($daftar, 'Berhasil dimuat');
-
-            /**
-             * Grafik Line
-             */
-            // $linen = Daftar::selectRaw("COUNT(*) as ttl, DATE(pengajuan) AS pengajuan_date")
-            //     ->whereBetween('pengajuan', [
-            //         now()->subDays(10)->format('Y-m-d'),
-            //         now()->format('Y-m-d')
-            //     ])
-            //     ->where('jenis', Daftar::LINEN)
-            //     ->orderBy('pengajuan_date')
-            //     ->groupBy('pengajuan_date')
-            //     ->get();
-
-            // $alat = Daftar::selectRaw("COUNT(*) as ttl, DATE(pengajuan) AS pengajuan_date")
-            //     ->whereBetween('pengajuan', [
-            //         now()->subDays(10)->format('Y-m-d'),
-            //         now()->format('Y-m-d')
-            //     ])
-            //     ->where('jenis', Daftar::ALAT)
-            //     ->orderBy('pengajuan_date')
-            //     ->groupBy('pengajuan_date')
-            //     ->get();
-
-            // $line = [
-            //     'label' => $linen->pluck('pengajuan_date'),
-            //     'series' => [
-            //         'linen' => $linen->pluck('ttl'),
-            //         'alat' => $alat->pluck('ttl')
-            //     ],
-            // ];
-
             $result = [
                 'grafik_card' => [
-                    'sum_pengajuan' => optional($daftar)->sum_pengajuan,
-                    'sum_selesai' => optional($daftar)->sum_selesai,
+                    'blm_selesai' => DB::table('daftar')
+                    ->selectRaw('COUNT(id) as blm_selesai')
+                    ->where('status', '<>', Daftar::SELESAI)
+                    ->where('status', '<>', Daftar::NOTA)
+                    ->pluck('blm_selesai')
+                    ->first(),
+
+                    'sum_selesai' => DB::table('daftar')
+                    ->selectRaw('COUNT(id) as st_selesai')
+                    ->where('status', Daftar::SELESAI)
+                    ->pluck('st_selesai')
+                    ->first(),
+
                     'count_alat' => DB::table('m_alat')
                         ->selectRaw('COUNT(*) as c_alat')->pluck('c_alat')[0],
+
                     'count_bundle' => DB::table('m_bundle')
                         ->selectRaw('COUNT(id) as c_bundle')->pluck('c_bundle')[0],
                 ],

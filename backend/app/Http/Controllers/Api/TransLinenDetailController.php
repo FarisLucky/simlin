@@ -34,10 +34,10 @@ class TransLinenDetailController extends Controller
                 throw new Exception('Master linen tidak ada');
             }
 
-            $sisa = $linen->jml;
-            if ($request->jml > $sisa) {
-                throw new Exception("Gagal! Jumlah linen Total: {$linen->jml}, Steril: {$linen->steril}, Kotor: {$linen->kotor}");
-            }
+            // $sisa = $linen->jml;
+            // if ($request->jml > $sisa) {
+            //     throw new Exception("Gagal! Jumlah linen Total: {$linen->jml}, Steril: {$linen->steril}, Kotor: {$linen->kotor}");
+            // }
 
             $input['kode_linen'] = $linen->kode_linen;
             $input['kode_linen_unit'] = $linen->kode;

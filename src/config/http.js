@@ -40,7 +40,6 @@ http.interceptors.response.use(
   (error) => {
     if (error.response.status === 401) {
       Cookies.remove("e-linen");
-      console.log('test')
       window.location.reload();
     }
     return Promise.reject(error);
