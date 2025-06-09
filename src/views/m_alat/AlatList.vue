@@ -17,40 +17,43 @@
                 </button>
             </div>
         </div>
-        <div class="text-end py-2 border-bottom">
-            <div class="d-inline-block me-1">
-                <div class="search-box">
-                    <div class="position-relative">
-                        <input
-                            type="text"
-                            class="form-control rounded bg-light border-light"
-                            placeholder="Search..."
-                            :value="filter.search"
-                            @keyup.enter="onFilterSearchFn"
-                        />
+        <form @submit.prevent="fetchData" autocomplete="false">
+            <div class="text-end py-2 border-bottom">
+                <div class="d-inline-block me-1">
+                    <div class="search-box">
+                        <div class="position-relative">
+                            <input
+                                type="text"
+                                class="form-control rounded bg-light border-light"
+                                placeholder="Search..."
+                                :value="filter.search"
+                                @input="onFilterSearchFn"
+                            />
+                        </div>
                     </div>
                 </div>
+                <button
+                    type="submit"
+                    @click.prevent="fetchData"
+                    class="btn btn-soft-primary me-1"
+                >
+                    <i class="mdi mdi-file-search-outline"></i>
+                    Cari
+                </button>
+                <button
+                    type="button"
+                    class="btn btn-soft-secondary me-1"
+                    @click.prevent="onReset"
+                >
+                    <i class="mdi mdi-refresh-circle"></i>
+                    Filter
+                </button>
             </div>
-            <button
-                type="submit"
-                class="btn btn-soft-primary me-1"
-                @click.prevent="fetchData"
-            >
-                <i class="mdi mdi-file-search-outline"></i>
-                Cari
-            </button>
-            <button
-                class="btn btn-soft-secondary me-1"
-                @click.prevent="onReset"
-            >
-                <i class="mdi mdi-refresh-circle"></i>
-                Filter
-            </button>
-        </div>
+        </form>
         <div class="mb-1 py-2">
             <EasyDataTable
                 buttons-pagination
-                rows-per-page="10"
+                :rows-per-page="10"
                 :loading="loading"
                 :headers="columns"
                 :items="rows"
@@ -100,8 +103,7 @@ import { ROLE } from "@/helpers/utils";
 
 const initTableOpt = () => ({
     page: 1,
-    rowsPerPage: 10,
-    sortBy: "nama   ",
+    sortBy: "updated_at",
     sortType: "DESC",
 });
 
@@ -171,6 +173,7 @@ export default {
             let query = queryString.stringify(
                 Object.assign({}, this.filter, this.paginateOpt)
             );
+            console.log(query);
 
             const [err, resp] = await mAlatService.all(query);
             if (err) {
@@ -218,14 +221,12 @@ export default {
         },
         onFilterSearchFn(event) {
             let val = event.target.value;
-            if (val.length >= 3) {
-                this.onFilterSearch(val);
-                this.fetchData();
-            }
             if (val == "") {
                 this.onFilterSearch("");
-                this.fetchData();
+
+                return;
             }
+            this.onFilterSearch(val);
         },
     },
 };

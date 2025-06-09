@@ -39,7 +39,8 @@ class MBundle extends Model implements SearchInterface, SortInterface
     public function scopeWhenSearch($query, $search)
     {
         return $query->when(!is_null($search), function ($query) use ($search) {
-            return $query->where('nama', 'LIKE', "%{$search}%");
+            return $query->where('nama', 'LIKE', "%{$search}%")
+                ->orWhere('dipinjam', 'LIKE', "%{$search}%");
         });
     }
 

@@ -2,10 +2,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 // import { useToastStore } from '@/store/toast'
 
-// const url = "http://localhost/simlin/backend/api"; //WEB APACHE
-// const webUrl = "http://localhost/simlin/backend"; //WEB APACHE
-const url = "https://rsgsit.my.id/simlin/backend/api"; //WEB APACHE
-const webUrl = "https://rsgsit.my.id/simlin/backend"; //WEB APACHE
+const url = "http://localhost/simlin/backend/api"; //WEB APACHE
+const webUrl = "http://localhost/simlin/backend"; //WEB APACHE
+// const url = "https://rsgsit.my.id/simlin/backend/api"; //WEB APACHE
+// const webUrl = "https://rsgsit.my.id/simlin/backend"; //WEB APACHE
 // const url = "http://192.168.3.208/simlin/backend/api"; //WEB APACHE
 // const webUrl = "http://192.168.3.208/simlin/backend"; //WEB APACHE
 

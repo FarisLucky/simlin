@@ -39,7 +39,8 @@ class MAlatController extends Controller
     {
         try {
 
-            $mAlats = MAlat::selectIdx()->get();
+            $mAlats = MAlat::selectIdx()
+                ->get();
 
             return $this->okApiResponse(
                 $mAlats,

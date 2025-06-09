@@ -35,7 +35,7 @@ export default {
                 kategori: this.idKategori,
             });
 
-            const [err, resp] = await mBundleService.data(query);
+            const [err, resp] = await mBundleService.getAlatTersedia(query);
             if (err) {
                 this.toastError({
                     title: "Gagal",
@@ -50,7 +50,7 @@ export default {
             resp.data.forEach((bundle) => {
                 this.listOpt.push({
                     id: bundle.id,
-                    nama: `${bundle.nama} adadi ${bundle.kd_unit}`,
+                    nama: bundle.nama,
                 });
             });
         },

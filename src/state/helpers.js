@@ -1,4 +1,4 @@
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions } from "vuex";
 
 // export const authComputed = {
 //   ...mapState('auth', {
@@ -8,29 +8,43 @@ import { mapState, mapActions } from 'vuex'
 // }
 
 export const layoutComputed = {
-  ...mapState('layout', {
+  ...mapState("layout", {
     layoutType: (state) => state.layoutType,
     leftSidebarType: (state) => state.leftSidebarType,
     layoutWidth: (state) => state.layoutWidth,
     topbar: (state) => state.topbar,
-    loader: (state) => state.loader
-  })
-}
+    loader: (state) => state.loader,
+  }),
+};
 
 // export const authMethods = mapActions('auth', ['logIn', 'logOut', 'register', 'resetPassword'])
 
-export const layoutMethods = mapActions('layout', ['changeLayoutType', 'changeLayoutWidth', 'changeLeftSidebarType', 'changeTopbar', 'changeLoaderValue'])
+export const layoutMethods = mapActions("layout", [
+  "changeLayoutType",
+  "changeLayoutWidth",
+  "changeLeftSidebarType",
+  "changeTopbar",
+  "changeLoaderValue",
+]);
 
-export const authFackMethods = mapActions('authfack', ['login', 'registeruser', 'logout'])
+export const authFackMethods = mapActions("authfack", [
+  "login",
+  "registeruser",
+  "logout",
+]);
 
-export const notificationMethods = mapActions('notification', ['success', 'error', 'clear'])
+export const notificationMethods = mapActions("notification", [
+  "success",
+  "error",
+  "clear",
+]);
 
 export const todoComputed = {
-  ...mapState('todo', {
-    todos: (state) => state.todos
-  })
-}
-export const todoMethods = mapActions('todo', ['fetchTodos'])
+  ...mapState("todo", {
+    todos: (state) => state.todos,
+  }),
+};
+export const todoMethods = mapActions("todo", ["fetchTodos"]);
 
 export const authState = {
   ...mapState("auth", {
@@ -75,7 +89,13 @@ export const mUnitState = {
   }),
 };
 
-export const mUnitMethods = mapActions("mUnit", ["onPageChange", "onPerPageChange", "resetFilter","onFilterSearch","reloadTable"]);
+export const mUnitMethods = mapActions("mUnit", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterSearch",
+  "reloadTable",
+]);
 
 /**
  * M ALAT
@@ -87,18 +107,30 @@ export const mAlatState = {
   }),
 };
 
-export const mAlatMethods = mapActions("mBundle", ["onPageChange", "onPerPageChange", "resetFilter","onFilterSearch","reloadTable"]);
+export const mAlatMethods = mapActions("mAlat", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterSearch",
+  "reloadTable",
+]);
 /**
  * M BUNDLE
  */
 export const mBundleState = {
-  ...mapState("mAlat", {
+  ...mapState("mBundle", {
     server: (state) => state.server,
     filter: (state) => state.filter,
   }),
 };
 
-export const mBundleMethods = mapActions("mBundle", ["onPageChange", "onPerPageChange", "resetFilter","onFilterSearch","reloadTable"]);
+export const mBundleMethods = mapActions("mBundle", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterSearch",
+  "reloadTable",
+]);
 /**
  * M Kategori
  */
@@ -109,7 +141,13 @@ export const mKategoriState = {
   }),
 };
 
-export const mKategoriMethods = mapActions("mKategori", ["onPageChange", "onPerPageChange", "resetFilter","onFilterSearch","reloadTable"]);
+export const mKategoriMethods = mapActions("mKategori", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterSearch",
+  "reloadTable",
+]);
 
 /**
  * M ALAT Detail
@@ -121,7 +159,13 @@ export const mAlatDetailState = {
   }),
 };
 
-export const mAlatDetailMethods = mapActions("mAlatDetail", ["onPageChange", "onPerPageChange", "resetFilter","onFilterSearch","reloadTable"]);
+export const mAlatDetailMethods = mapActions("mAlatDetail", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterSearch",
+  "reloadTable",
+]);
 
 /**
  * M Linen Detail
@@ -133,7 +177,13 @@ export const mLinenState = {
   }),
 };
 
-export const mLinenMethods = mapActions("mLinen", ["onPageChange", "onPerPageChange", "resetFilter","onFilterSearch","reloadTable"]);
+export const mLinenMethods = mapActions("mLinen", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterSearch",
+  "reloadTable",
+]);
 
 /**
  * M Linen Unit Detail
@@ -145,7 +195,14 @@ export const mLinenUnitState = {
   }),
 };
 
-export const mLinenUnitMethods = mapActions("mLinenUnit", ["onPageChange", "onPerPageChange", "resetFilter","onFilterUnit","onFilterSearch","reloadTable"]);
+export const mLinenUnitMethods = mapActions("mLinenUnit", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterUnit",
+  "onFilterSearch",
+  "reloadTable",
+]);
 
 /**
  * Daftar
@@ -157,4 +214,11 @@ export const daftarState = {
   }),
 };
 
-export const daftarMethods = mapActions("daftar", ["onPageChange", "onPerPageChange", "resetFilter","onFilterSearch","onFilterJenis","reloadTable"]);
+export const daftarMethods = mapActions("daftar", [
+  "onPageChange",
+  "onPerPageChange",
+  "resetFilter",
+  "onFilterSearch",
+  "onFilterJenis",
+  "reloadTable",
+]);

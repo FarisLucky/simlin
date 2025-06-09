@@ -15,36 +15,34 @@
                         Tambah
                     </button>
                 </div>
-                <div class="text-end py-2 border-bottom mb-2">
-                    <div class="d-inline-block me-1">
-                        <div class="search-box">
-                            <div class="position-relative">
-                                <input
-                                    type="text"
-                                    class="form-control rounded bg-light border-light"
-                                    placeholder="Search..."
-                                    :value="filter.search"
-                                    @keyup.enter="onFilterSearchFn"
-                                />
+                <form @submit.prevent="fetchData">
+                    <div class="text-end py-2 border-bottom mb-2">
+                        <div class="d-inline-block me-1">
+                            <div class="search-box">
+                                <div class="position-relative">
+                                    <input
+                                        type="text"
+                                        class="form-control rounded bg-light border-light"
+                                        placeholder="Search..."
+                                        :value="filter.search"
+                                        @input="onFilterSearchFn"
+                                    />
+                                </div>
                             </div>
                         </div>
+                        <button type="submit" class="btn btn-soft-primary me-1">
+                            <i class="mdi mdi-file-search-outline"></i>
+                            Cari
+                        </button>
+                        <button
+                            class="btn btn-soft-secondary me-1"
+                            @click.prevent="onReset"
+                        >
+                            <i class="mdi mdi-refresh-circle"></i>
+                            Filter
+                        </button>
                     </div>
-                    <button
-                        type="submit"
-                        class="btn btn-soft-primary me-1"
-                        @click.prevent="fetchData"
-                    >
-                        <i class="mdi mdi-file-search-outline"></i>
-                        Cari
-                    </button>
-                    <button
-                        class="btn btn-soft-secondary me-1"
-                        @click.prevent="onReset"
-                    >
-                        <i class="mdi mdi-refresh-circle"></i>
-                        Filter
-                    </button>
-                </div>
+                </form>
                 <div class="mb-1">
                     <EasyDataTable
                         buttons-pagination
@@ -55,6 +53,7 @@
                         theme-color="#556ee6"
                         show-index
                         table-class-name="no-border-table"
+                        :body-row-class-name="bodyRowColor"
                         must-sort
                     >
                         <template #empty-message>
@@ -145,6 +144,11 @@ export default {
                     sortable: false,
                 },
                 {
+                    text: "Dipinjam",
+                    value: "dipinjam",
+                    sortable: false,
+                },
+                {
                     text: "Dibuat",
                     value: "created_at",
                     sortable: false,
@@ -189,6 +193,7 @@ export default {
         async fetchData() {
             this.show();
             this.isLoading = true;
+            console.log(this.filter);
             let query = queryString.stringify(
                 Object.assign({}, this.filter, this.paginateOpt)
             );
@@ -241,18 +246,29 @@ export default {
         },
         onFilterSearchFn(event) {
             let val = event.target.value;
-            if (val.length >= 3) {
-                this.onFilterSearch(val);
-                this.fetchData();
-            }
-            if (val == "") {
-                this.onFilterSearch("");
-                this.fetchData();
-            }
+            this.onFilterSearch(val);
+            // console.log("func filter: " + this.filter.search);
         },
         onUpdateSortFn(val) {
             console.log(val);
         },
+        bodyRowColor(item) {
+            let color = "";
+            console.log(item.dipinjam);
+            if (item?.dipinjam !== null && item?.dipinjam !== undefined) {
+                color = "dipinjam";
+            } else {
+                color = "";
+            }
+
+            return color;
+        },
     },
 };
 </script>
+<style>
+.dipinjam {
+    --easy-table-body-row-background-color: #f56c6c;
+    --easy-table-body-row-font-color: #fff;
+}
+</style>

@@ -20,13 +20,14 @@ class MBundleController extends Controller
             $sortType = request('sortType');
 
             $mBundles = MBundle::with([
-                'kategori' => function($query){
-                    $query->select('id','nama');
+                'kategori' => function ($query) {
+                    $query->select('id', 'nama');
                 },
-                'mBundleDetail' => function($query){
-                    $query->select('id','id_bundle','alat','jml');
+                'mBundleDetail' => function ($query) {
+                    $query->select('id', 'id_bundle', 'alat', 'jml');
                 }
-            ])->whenSearch($search)
+            ])
+                ->whenSearch($search)
                 ->whenSort($sortBy, $sortType)
                 ->latest()
                 ->get();
@@ -47,15 +48,20 @@ class MBundleController extends Controller
 
             $search = request('search');
             $idKategori = request('kategori');
+            $tersedia = request('tersedia');
 
             $mBundles = MBundle::selectIdx()
-            ->when(!is_null($search), function($query) use($search){
-                $query->where('nama', 'LIKE', "%{$search}%");
-            })
-            ->when(!is_null($idKategori), function($query) use($idKategori){
-                $query->where('id_kategori', $idKategori);
-            })
-            ->get();
+                ->when(!is_null($search), function ($query) use ($search) {
+                    $query->where('nama', 'LIKE', "%{$search}%")
+                        ->orWhere('dipinjam', 'LIKE', "%{$search}%");
+                })
+                ->when(!is_null($idKategori), function ($query) use ($idKategori) {
+                    $query->where('id_kategori', $idKategori);
+                })
+                ->when($tersedia, function ($query) {
+                    $query->whereNull('dipinjam');
+                })
+                ->get();
 
             return $this->okApiResponse(
                 $mBundles,

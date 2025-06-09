@@ -7,6 +7,7 @@ use App\Http\Controllers\Traits\ApiResponse;
 use App\Models\Daftar;
 use App\Models\Linen;
 use App\Models\LinenDetail;
+use App\Models\MBundle;
 use App\Models\MUnit;
 use App\Models\PinjamAlat;
 use App\Models\User;
@@ -289,6 +290,14 @@ class DaftarController extends Controller
                         if (count($daftar->pinjamAlat) > 0) {
                             foreach ($daftar->pinjamAlat as $pinjam) {
                                 $pinjam->update(['status' => PinjamAlat::SELESAI]);
+
+                                /**
+                                 * Master Bundle
+                                 */
+                                $mBundle = MBundle::where('id', $pinjam->id_bundle)->first();
+                                $mBundle->dipinjam = null;
+                                $mBundle->dipinjam_at = null;
+                                $mBundle->save();
                             }
                         }
                         break;
