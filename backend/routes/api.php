@@ -81,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('daftar/ajukan/{kode}', [DaftarController::class, 'updateAjukan'])->name('daftar.update_ajukan');
     Route::get('daftar-grafik/line', [DaftarController::class, 'grafik'])->name('daftar.grafik');
     Route::get('daftar-statistik', [DaftarController::class, 'statistik'])->name('daftar.statistik');
+    Route::get('daftar-statistik/trend-kasa', [DaftarController::class, 'trendKasa'])->name('daftar.statistik-trend-kasa');
 
     /**
      * Trans Linen route
@@ -119,7 +120,7 @@ Route::middleware('auth:sanctum')->group(function () {
      */
     Route::delete('logout', [LoginController::class, 'logout'])->name('auth.logout');
 
-     /**
+    /**
      * History Daftar route
      **/
     Route::get('history/daftar', [HDaftarController::class, 'index'])->name('history_daftar.index');
@@ -134,7 +135,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('line', [DashboardController::class, 'line'])
             ->name('line');
     });
-
 });
 
 /**
@@ -149,3 +149,5 @@ Route::post('login', [LoginController::class, 'login'])->name('auth.login');
  **/
 Route::apiResource('mutu', MutuController::class)->names('mutu');
 Route::get('mutu/{kode}/daftar', [MutuController::class, 'showByDaftar'])->name('mutu.show-by-daftar');
+
+Route::get('daftar-statistik/trend-kasa', [DaftarController::class, 'trendKasa'])->name('daftar.statistik-trend-kasa');

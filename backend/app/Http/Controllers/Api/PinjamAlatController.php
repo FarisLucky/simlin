@@ -6,10 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\ApiResponse;
 use App\Http\Requests\StorePinjamAlatRequest;
 use App\Models\Catatan;
+use App\Models\MBundle;
 use App\Models\PinjamAlat;
 use App\Models\User;
 use App\Services\PinjamService;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PinjamAlatController extends Controller
 {
@@ -90,7 +93,7 @@ class PinjamAlatController extends Controller
     {
         try {
 
-            $mKategori = MKategori::find($id);
+            $mKategori = PinjamAlat::find($id);
 
             return $this->okApiResponse($mKategori, 'Berhasil dimuat');
         } catch (\Throwable $th) {
@@ -132,13 +135,25 @@ class PinjamAlatController extends Controller
     public function update(Request $request, $id)
     {
         try {
+
+            DB::beginTransaction();
             $pinjam = PinjamAlat::where('id', $id)->firstOrFail();
             $pinjam->id_bundle = $request->id_bundle;
             $pinjam->bundle = $request->bundle;
             $pinjam->save();
 
+            /**
+             * update master bundle
+             */
+            $mBundle = MBundle::where('id', $request->id_bundle)->first();
+            if (!is_null($mBundle->dipinjam) && $mBundle->dipinjam !== $pinjam->kd_unit) {
+                throw new Exception("Bundle {$mBundle->nama} sudah dipinjam {$pinjam->kd_unit}");
+            }
+
+            DB::commit();
             return $this->okApiResponse($pinjam, 'Berhasil diperbarui');
         } catch (\Throwable $th) {
+            DB::rollBack();
 
             return $this->errorApiResponse($th->getMessage());
         }

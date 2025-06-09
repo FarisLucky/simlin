@@ -82,10 +82,12 @@ class MutuController extends Controller
                 foreach ($details as $detail) {
                     $sum += $detail->jml_akhir;
                 }
-
+				$daftar = Daftar::where('kode', $kode)->first();
+				
                 $payload = [
                     'kode_daftar' => $kode,
                     'tgl_daftar' => now(),
+					'tgl_daftar' => Carbon::createFromFormat('Y-m-d H:i:s', $daftar->pengajuan)->format('Y-m-d'),
                     'jml_rusak' => 0,
                     'ttl' => $sum,
                 ];
@@ -106,7 +108,7 @@ class MutuController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $mutu = Mutu::find($id);
+            $mutu = Mutu::findOrFail($id);
 
             $payload = [
                 'tdk_noda' => $request->tdk_noda,

@@ -5,6 +5,7 @@
         :title="modalTitle"
         title-class="font-18"
         hide-footer
+        @close="hideModal"
     >
         <div class="mb-1">
             <h5>
@@ -47,6 +48,8 @@ export default {
         },
         hideModal() {
             this.modal = false;
+            this.modalForm = {};
+            this.items = [];
         },
         async onDelete() {
             this.show();

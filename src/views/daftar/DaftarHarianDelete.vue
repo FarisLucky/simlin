@@ -5,6 +5,7 @@
         :title="modalTitle"
         title-class="font-18"
         hide-footer
+        @close="hideModal"
     >
         <div class="mb-1">
             <h5>
@@ -42,6 +43,7 @@ export default {
         },
         hideModal() {
             this.modal = false;
+            this.modalForm = {};
         },
         async onDelete() {
             this.show();
@@ -59,9 +61,9 @@ export default {
                 title: "Berhasil",
                 msg: "OK",
             });
+            this.hideModal();
             this.hide();
             this.$emit("fetch");
-            this.hideModal();
         },
     },
 };

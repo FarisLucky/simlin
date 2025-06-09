@@ -141,6 +141,7 @@
                                 size="sm"
                                 @click.prevent="
                                     onShowMutu({
+                                        id: item.id,
                                         kode: item.kode,
                                         title: 'Perbaikan Mutu CSSD & LINEN',
                                     })
@@ -350,6 +351,9 @@ export default {
             let modalTambah = this.$refs.daftarHarianMutuRef;
             modalTambah.modalTitle = params.title;
             modalTambah.modalForm.kode_daftar = params.kode;
+            modalTambah.modalForm.id = params.id;
+            modalTambah.mutu.id = params.id;
+            modalTambah.mutu.kode_daftar = params.kode;
             modalTambah.showModal();
         },
     },

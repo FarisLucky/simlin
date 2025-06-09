@@ -18,6 +18,7 @@ import {
 import { BarChart } from "echarts/charts";
 import { CanvasRenderer } from "echarts/renderers";
 import VChart from "vue-echarts";
+import TrendKasa from "./TrendKasa.vue";
 
 /**
  * Dashboard Component
@@ -48,6 +49,7 @@ export default {
         Layout,
         PageHeader,
         VChart,
+        TrendKasa,
     },
     data() {
         return {
@@ -65,9 +67,6 @@ export default {
             statData: [],
             option: {
                 color: ["#FFBF00", "#FF0087", "#80FFA5", "#00DDFF", "#37A2FF"],
-                title: {
-                    text: "Permintaan Linen Dan Alat 10 Hari Terakhir",
-                },
                 tooltip: {
                     trigger: "axis",
                     axisPointer: {
@@ -244,12 +243,19 @@ export default {
                         </BCardBody>
                     </BCard>
                 </BCol>
-                <div v-if="option.series.length > 0" class="col-12">
+                <BCol cols="6" v-if="option.series.length > 0">
                     <BCard no-body>
                         <BCardHeader>
                             <BCardTitle>Dashboard SIM LINEN</BCardTitle>
                         </BCardHeader>
                         <BCardBody>
+                            <h4 class="mb-1">
+                                Permintaan Linen Dan Alat 10 Hari Terakhir
+                            </h4>
+                            <small class="text-danger">
+                                * Jumlah Permintaan Linen Dan Alat yang sudah
+                                selesai
+                            </small>
                             <v-chart
                                 class="chart"
                                 :option="option"
@@ -258,7 +264,19 @@ export default {
                             />
                         </BCardBody>
                     </BCard>
-                </div>
+                </BCol>
+                <BCol cols="6" v-if="option.series.length > 0">
+                    <BCard no-body>
+                        <BCardHeader>
+                            <BCardTitle>
+                                Trend Permintaan Kassa SIM LINEN</BCardTitle
+                            >
+                        </BCardHeader>
+                        <BCardBody>
+                            <TrendKasa />
+                        </BCardBody>
+                    </BCard>
+                </BCol>
             </BRow>
         </div>
     </Layout>

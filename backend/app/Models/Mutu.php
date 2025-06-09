@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Mutu extends Model
 {
@@ -44,8 +45,13 @@ class Mutu extends Model
 
     public function scopeWhenSearch($query, $search)
     {
-        return $query->when(!is_null($search), function($query) use($search){
-            return $query->where('kode_daftar','LIKE', "%{$search}%")->orWhere('tgl_daftar','LIKE', "%{$search}%");
+        return $query->when(!is_null($search), function ($query) use ($search) {
+            return $query->where('kode_daftar', 'LIKE', "%{$search}%")->orWhere('tgl_daftar', 'LIKE', "%{$search}%");
         });
+    }
+
+    public function daftar(): BelongsTo
+    {
+        return $this->belongsTo(Daftar::class, 'kode_daftar', 'kode');
     }
 }

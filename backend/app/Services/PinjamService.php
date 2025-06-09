@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\MBundle;
 use App\Models\MBundleDetail;
 use App\Models\PinjamAlat;
 use App\Models\PinjamAlatDetail;
@@ -34,6 +35,13 @@ class PinjamService
                         ];
                     }
                     PinjamAlatDetail::insert($pinjamDetailPayload);
+                    /**
+                     * Master Bundle
+                     */
+                    $mBundle = MBundle::where('id', $pinjam->id_bundle)->first();
+                    $mBundle->dipinjam = $pinjam->kd_unit;
+                    $mBundle->dipinjam_at = now();
+                    $mBundle->save();
                 }
             }
         }

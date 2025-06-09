@@ -16,6 +16,8 @@ class MBundle extends Model implements SearchInterface, SortInterface
     protected $fillable = [
         'id_kategori',
         'nama',
+        'dipinjam',
+        'dipinjam_at',
     ];
 
     public $casts = [
@@ -25,7 +27,13 @@ class MBundle extends Model implements SearchInterface, SortInterface
 
     public function scopeSelectIdx($query)
     {
-        return $query->select('id', 'id_kategori', 'nama');
+        return $query->select(
+            'id',
+            'id_kategori',
+            'nama',
+            'dipinjam',
+            'dipinjam_at',
+        );
     }
 
     public function scopeWhenSearch($query, $search)

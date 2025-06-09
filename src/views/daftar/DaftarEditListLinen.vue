@@ -62,7 +62,7 @@
                             class="form-control"
                             v-model="item.jml"
                             :disabled="st_status !== STATUS_DAFTAR.NOTA"
-                            @keyup.enter="
+                            @keyup="
                                 updateQty(
                                     {
                                         jml: item.jml,
@@ -72,22 +72,6 @@
                                 )
                             "
                         />
-                        <button
-                            v-if="st_status === STATUS_DAFTAR.NOTA"
-                            class="btn btn-soft-primary"
-                            type="button"
-                            @click.prevent="
-                                updateQty(
-                                    {
-                                        jml: item.jml,
-                                        jenis: 'pengajuan',
-                                    },
-                                    item.id
-                                )
-                            "
-                        >
-                            <i class="mdi mdi-content-save"></i>
-                        </button>
                     </div>
                     <div v-else>
                         <b>{{ item.jml }}</b>
@@ -106,7 +90,7 @@
                             type="number"
                             class="form-control form-control-sm"
                             v-model="item.jml_terima"
-                            @keyup.enter="
+                            @keyup="
                                 updateQty(
                                     {
                                         jml: item.jml_terima,
@@ -116,21 +100,6 @@
                                 )
                             "
                         />
-                        <button
-                            class="btn btn-sm btn-soft-primary"
-                            type="button"
-                            @click.prevent="
-                                updateQty(
-                                    {
-                                        jml: item.jml_terima,
-                                        jenis: 'jml_terima',
-                                    },
-                                    item.id
-                                )
-                            "
-                        >
-                            <i class="mdi mdi-content-save"></i>
-                        </button>
                     </div>
                     <div v-else>
                         <b>{{ item.jml_terima }}</b>
@@ -148,7 +117,7 @@
                             type="number"
                             class="form-control"
                             v-model="item.jml_kembali"
-                            @keyup.shift.enter="
+                            @keyup="
                                 updateQty(
                                     {
                                         jml: item.jml_kembali,
@@ -158,21 +127,6 @@
                                 )
                             "
                         />
-                        <button
-                            class="btn btn-soft-primary"
-                            type="button"
-                            @click.prevent="
-                                updateQty(
-                                    {
-                                        jml: item.jml_kembali,
-                                        jenis: 'jml_kembali',
-                                    },
-                                    item.id
-                                )
-                            "
-                        >
-                            <i class="mdi mdi-content-save"></i>
-                        </button>
                     </div>
                     <div v-else>
                         <b>{{ item.jml_kembali }}</b>
@@ -191,7 +145,7 @@
                             type="number"
                             class="form-control"
                             v-model="item.jml_akhir"
-                            @keyup.shift.enter="
+                            @keyup="
                                 updateQty(
                                     {
                                         jml: item.jml_akhir,
@@ -201,21 +155,6 @@
                                 )
                             "
                         />
-                        <button
-                            class="btn btn-soft-primary"
-                            type="button"
-                            @click.prevent="
-                                updateQty(
-                                    {
-                                        jml: item.jml_akhir,
-                                        jenis: 'jml_akhir',
-                                    },
-                                    item.id
-                                )
-                            "
-                        >
-                            <i class="mdi mdi-content-save"></i>
-                        </button>
                     </div>
                     <div v-else>
                         <b>{{ item.jml_akhir }}</b>

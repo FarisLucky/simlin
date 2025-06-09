@@ -10,7 +10,9 @@ const webUrl = "https://rsgsit.my.id/simlin/backend"; //WEB APACHE
 // const webUrl = "http://192.168.3.208/simlin/backend"; //WEB APACHE
 
 const token =
-  Cookies.get("e-linen") != undefined ? JSON.parse(Cookies.get("e-linen")).token : "";
+  Cookies.get("e-linen") != undefined
+    ? JSON.parse(Cookies.get("e-linen")).token
+    : "";
 
 const http = axios.create({
   baseURL: url,

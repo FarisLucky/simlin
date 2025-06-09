@@ -72,9 +72,9 @@ class LinenDetail extends Model
             'id' => $this->id,
             'kode_daftar' => $this->kode_daftar,
             'nama' => $this->nama,
-            'nota_linen'=> $this->nota_linen,
-            'kode_linen'=> $this->kode_linen,
-            'kode_linen_unit'=> $this->kode_linen_unit,
+            'nota_linen' => $this->nota_linen,
+            'kode_linen' => $this->kode_linen,
+            'kode_linen_unit' => $this->kode_linen_unit,
         ];
     }
 
@@ -92,6 +92,11 @@ class LinenDetail extends Model
 
     public function daftar(): BelongsTo
     {
-        return $this->belongsTo(Daftar::class, 'kode_daftar','kode');
+        return $this->belongsTo(Daftar::class, 'kode_daftar', 'kode');
+    }
+
+    public function linen(): BelongsTo
+    {
+        return $this->belongsTo(Linen::class, 'nota_linen', 'nota');
     }
 }

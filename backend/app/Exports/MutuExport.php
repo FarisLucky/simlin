@@ -2,8 +2,6 @@
 
 namespace App\Exports;
 
-use App\Models\Daftar;
-use App\Models\Linen;
 use App\Models\Mutu;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Carbon;
@@ -44,10 +42,8 @@ class MutuExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize, 
         $mutu = Mutu::leftJoin('daftar', 'daftar.kode', '=', 'mutu.kode_daftar')
             ->leftJoin('m_unit', 'm_unit.kode', '=', 'daftar.kd_unit')
             ->when(!is_null($start) && !is_null($end), function ($query) use ($start, $end) {
-                $query->whereBetween('mutu.tgl_daftar', [
-                    $start->format('Y-m-d'),
-                    $end->format('Y-m-d')
-                ]);
+                $query->whereDate('daftar.pengajuan', '>', $start->format('Y-m-d'))
+                    ->whereDate('daftar.pengajuan', '<', $end->format('Y-m-d'));
             })
             ->when(!is_null($units) && count($units) > 0, function ($query) use ($units) {
                 $all = false;
@@ -64,7 +60,7 @@ class MutuExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize, 
             ->get([
                 'mutu.id',
                 'mutu.kode_daftar',
-                'mutu.tgl_daftar',
+                'daftar.pengajuan',
                 'mutu.tdk_noda',
                 'mutu.tdk_bau',
                 'mutu.tdk_pudar',
@@ -74,6 +70,7 @@ class MutuExport implements FromView, WithDrawings, WithStyles, ShouldAutoSize, 
                 'mutu.ttl',
                 DB::raw('m_unit.nama as nama_unit'),
             ]);
+        // dd($mutu);
 
 
         return view('mutu_export', compact('mutu'), $params);

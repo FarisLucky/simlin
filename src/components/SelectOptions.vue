@@ -50,7 +50,7 @@ export default {
             resp.data.forEach((bundle) => {
                 this.listOpt.push({
                     id: bundle.id,
-                    nama: bundle.nama,
+                    nama: `${bundle.nama} adadi ${bundle.kd_unit}`,
                 });
             });
         },

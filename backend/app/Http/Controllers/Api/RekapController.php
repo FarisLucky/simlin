@@ -20,8 +20,13 @@ class RekapController extends Controller
             $unit = request('unit');
 
             $splitTgl = explode('to', $tgl);
-            $start = trim($splitTgl[0]);
-            $end = trim($splitTgl[1]);
+            if (count($splitTgl) > 1) {
+                $start = trim($splitTgl[0]);
+                $end = trim($splitTgl[1]);
+            } else {
+                $start = $tgl;
+                $end = $tgl;
+            }
 
             $params = [
                 'start' => $start,
@@ -48,8 +53,13 @@ class RekapController extends Controller
             $unit = request('unit');
 
             $splitTgl = explode('to', $tgl);
-            $start = trim($splitTgl[0]);
-            $end = trim($splitTgl[1]);
+            if (count($splitTgl) > 1) {
+                $start = trim($splitTgl[0]);
+                $end = trim($splitTgl[1]);
+            } else {
+                $start = $tgl;
+                $end = $tgl;
+            }
 
             $params = [
                 'start' => $start,
@@ -66,5 +76,4 @@ class RekapController extends Controller
             dd($th);
         }
     }
-
 }

@@ -191,6 +191,7 @@ export default {
                 nama: linen.nama,
                 label: `${linen.nama}`,
             }));
+            console.log(this.mLinenUnitList);
         },
         onSelectLinen(row) {
             this.form.kode = row.kode;

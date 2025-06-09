@@ -47,7 +47,7 @@ class Daftar extends Model implements SearchInterface, SortInterface
         'updated_by_name',
     ];
 
-    protected $appends = ['jenis_cast', 'pengajuan_cast', 'terima_cast', 'kembalikan_cast', 'status_cast', 'selesai_cast','created_at_cast'];
+    protected $appends = ['jenis_cast', 'pengajuan_cast', 'terima_cast', 'kembalikan_cast', 'status_cast', 'selesai_cast', 'created_at_cast'];
 
     public $casts = [
         'created_at' => 'datetime',
@@ -90,23 +90,23 @@ class Daftar extends Model implements SearchInterface, SortInterface
 
     public function searchableAs()
     {
-       return 'daftar_index';
+        return 'daftar_index';
     }
 
     public function scopeWhenSearch($query, $search)
     {
         return $query->when(!is_null($search), function ($query) use ($search) {
-            return $query->where('kode','LIKE', "%{$search}%")->orWhere('nama', 'LIKE', "%{$search}%");
+            return $query->where('kode', 'LIKE', "%{$search}%")->orWhere('nama', 'LIKE', "%{$search}%");
         });
     }
 
     public function scopeWhenJenis($query, $jenis)
     {
         return $query->when(!is_null($jenis), function ($query) use ($jenis) {
-            if($jenis === self::LINEN) {
-                return $query->with('linen')->where('jenis','LIKE', "%{$jenis}%");
-            } else if($jenis === self::ALAT) {
-                return $query->with('pinjamAlat')->where('jenis','LIKE', "%{$jenis}%");
+            if ($jenis === self::LINEN) {
+                return $query->with('linen')->where('jenis', 'LIKE', "%{$jenis}%");
+            } else if ($jenis === self::ALAT) {
+                return $query->with('pinjamAlat')->where('jenis', 'LIKE', "%{$jenis}%");
             }
 
             return $query;
@@ -167,7 +167,7 @@ class Daftar extends Model implements SearchInterface, SortInterface
     public function getStatusCastAttribute()
     {
         $status = '';
-        if($this->jenis === Daftar::LINEN) {
+        if ($this->jenis === Daftar::LINEN) {
             switch ($this->status) {
                 case self::NOTA:
                     $status = 'NOTA';
@@ -185,7 +185,7 @@ class Daftar extends Model implements SearchInterface, SortInterface
                     $status = 'KONFIRMASI RUANGAN';
                     break;
             }
-        } else if($this->jenis === Daftar::ALAT) {
+        } else if ($this->jenis === Daftar::ALAT) {
             switch ($this->status) {
                 case self::NOTA:
                     $status = 'NOTA';
@@ -216,47 +216,45 @@ class Daftar extends Model implements SearchInterface, SortInterface
             $daftar->updated_by = auth()->user()->getAuthIdentifier();
         });
 
-        static::deleted(function($daftar){
-            if($daftar->jenis === self::LINEN && count($daftar->linen) > 0) {
-                if(count($daftar->linen) > 0) {
-                    foreach ($daftar->linen as $linen) {
-                        $linen->delete();
-                    }
-                }
-
-            } else if($daftar->jenis === self::ALAT && count($daftar->linen) > 0) {
-                if(count($daftar->pinjamAlat) > 0) {
-                    foreach ($daftar->pinjamAlat as $alat) {
-                        $alat->delete();
-                    }
-                }
-
+        static::deleted(function ($daftar) {
+            if ($daftar->jenis === self::LINEN && !is_null($daftar->linen)) {
+                // if (count($daftar->linen) > 0) {
+                //     foreach ($daftar->linen as $linen) {
+                $daftar->linen->delete();
+                //     }
+                // }
+            } else if ($daftar->jenis === self::ALAT && !is_null($daftar->pinjamAlat)) {
+                // if (count($daftar->pinjamAlat) > 0) {
+                //     foreach ($daftar->pinjamAlat as $alat) {
+                $daftar->pinjamAlat->delete();
+                //     }
+                // }
             }
         });
     }
 
     public function linen(): HasOne
     {
-        return $this->hasOne(Linen::class, 'kode_daftar','kode');
+        return $this->hasOne(Linen::class, 'kode_daftar', 'kode');
     }
 
     public function linenDetail(): HasMany
     {
-        return $this->hasMany(LinenDetail::class, 'kode_daftar','kode');
+        return $this->hasMany(LinenDetail::class, 'kode_daftar', 'kode');
     }
 
     public function pinjamAlat(): HasMany
     {
-        return $this->hasMany(PinjamAlat::class, 'kode_daftar','kode');
+        return $this->hasMany(PinjamAlat::class, 'kode_daftar', 'kode');
     }
 
     public function pinjamAlatDetail(): HasMany
     {
-        return $this->hasMany(PinjamAlatDetail::class, 'kode_daftar','kode');
+        return $this->hasMany(PinjamAlatDetail::class, 'kode_daftar', 'kode');
     }
     public function unit(): BelongsTo
     {
-        return $this->belongsto(MUnit::class, 'kd_unit','kode');
+        return $this->belongsto(MUnit::class, 'kd_unit', 'kode');
     }
     public function mutu(): HasOne
     {

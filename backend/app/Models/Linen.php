@@ -83,8 +83,8 @@ class Linen extends Model
             }
         });
 
-        static::deleted(function($linen){
-            if(count($linen->detail) > 0) {
+        static::deleted(function ($linen) {
+            if (count($linen->detail) > 0) {
                 $linen->detail->each->delete();
             }
         });

@@ -20,7 +20,8 @@
 <table>
     <thead>
         <tr>
-            <th>Tanggal</th>
+            <th>Nota Pengajuan</th>
+            <th>Kode Daftar</th>
             <th>Unit</th>
             <th>TIDAK NODA</th>
             <th>TIDAK BAU</th>
@@ -33,7 +34,8 @@
     <tbody>
         @foreach ($mutu as $m)
             <tr>
-                <td>{{ \Carbon\Carbon::make($m->tgl_daftar)->format('d-m-Y') }}</td>
+                <td>{{ \Carbon\Carbon::make($m->pengajuan)->format('d-m-Y') }}</td>
+                <td>{{ optional($m)->kode_daftar }}</td>
                 <td>{{ optional($m)->nama_unit }}</td>
                 <td>{{ optional($m)->tdk_noda }}</td>
                 <td>{{ optional($m)->tdk_bau }}</td>

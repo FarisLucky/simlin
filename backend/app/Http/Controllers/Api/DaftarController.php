@@ -6,12 +6,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\Traits\ApiResponse;
 use App\Models\Daftar;
 use App\Models\Linen;
+use App\Models\LinenDetail;
 use App\Models\MUnit;
 use App\Models\PinjamAlat;
 use App\Models\User;
 use App\Services\DaftarService;
 use App\Services\LinenService;
 use App\Services\PinjamService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -66,6 +68,7 @@ class DaftarController extends Controller
                 ->whenJenis(strtoupper($jenis))
                 ->whenSort($sortBy, $sortType)
                 ->where('status', '<>', Daftar::SELESAI)
+                ->latest()
                 ->paginate($perPage);
 
             return $this->okApiResponse(
@@ -212,18 +215,43 @@ class DaftarController extends Controller
                 'status' => $request->progress
             ];
             if ($daftar->jenis === Daftar::LINEN) {
+
+                $linenDetail = LinenDetail::where('kode_daftar', $daftar->kode)->get();
+
                 switch ($request->progress) {
                     case Daftar::PENGAJUAN:
                         $payload['pengajuan'] = now();
                         $payload['status'] = Daftar::PENGAJUAN;
+                        /**
+                         * update jml terima linen detail
+                         */
+                        $linenDetail->each(function ($item) {
+                            $item->jml_terima = $item->jml;
+                            $item->save();
+                        });
+
                         break;
                     case Daftar::TERIMA:
                         $payload['terima'] = now();
                         $payload['status'] = Daftar::TERIMA;
+                        /**
+                         * update jml kembali linen detail
+                         */
+                        $linenDetail->each(function ($item) {
+                            $item->jml_kembali = $item->jml_terima;
+                            $item->save();
+                        });
                         break;
                     case Daftar::DIKEMBALIKAN:
                         $payload['kembalikan'] = now();
                         $payload['status'] = Daftar::DIKEMBALIKAN;
+                        /**
+                         * update jml akhir linen detail
+                         */
+                        $linenDetail->each(function ($item) {
+                            $item->jml_akhir = $item->jml_kembali;
+                            $item->save();
+                        });
                         break;
                     case Daftar::SELESAI:
                         $payload['selesai'] = now();
@@ -284,7 +312,7 @@ class DaftarController extends Controller
     {
         try {
 
-            $daftar = Daftar::where('id', $id)->first();
+            $daftar = Daftar::where('id', $id)->firstOrFail();
             if (is_null($daftar)) {
                 throw new \Exception('Data sudah tidak ada');
             }
@@ -302,10 +330,13 @@ class DaftarController extends Controller
         try {
             $ids = request('ids');
             $inIds = explode(',', $ids);
+            $inIds = array_filter($inIds, function ($value) {
+                return !is_null($value) && $value !== '';
+            });
             $daftars = Daftar::whereIn('id', $inIds)->get();
 
-            if ($daftars->isEmpty()) {
-                throw new \Exception(print_r($inIds));
+            if (count($daftars) < 1) {
+                throw new \Exception('Silahkan pilih nota');
             }
 
             foreach ($daftars as $daftar) {
@@ -368,17 +399,17 @@ class DaftarController extends Controller
             $result = [
                 'grafik_card' => [
                     'blm_selesai' => DB::table('daftar')
-                    ->selectRaw('COUNT(id) as blm_selesai')
-                    ->where('status', '<>', Daftar::SELESAI)
-                    ->where('status', '<>', Daftar::NOTA)
-                    ->pluck('blm_selesai')
-                    ->first(),
+                        ->selectRaw('COUNT(id) as blm_selesai')
+                        ->where('status', '<>', Daftar::SELESAI)
+                        ->where('status', '<>', Daftar::NOTA)
+                        ->pluck('blm_selesai')
+                        ->first(),
 
                     'sum_selesai' => DB::table('daftar')
-                    ->selectRaw('COUNT(id) as st_selesai')
-                    ->where('status', Daftar::SELESAI)
-                    ->pluck('st_selesai')
-                    ->first(),
+                        ->selectRaw('COUNT(id) as st_selesai')
+                        ->where('status', Daftar::SELESAI)
+                        ->pluck('st_selesai')
+                        ->first(),
 
                     'count_alat' => DB::table('m_alat')
                         ->selectRaw('COUNT(*) as c_alat')->pluck('c_alat')[0],
@@ -387,6 +418,40 @@ class DaftarController extends Controller
                         ->selectRaw('COUNT(id) as c_bundle')->pluck('c_bundle')[0],
                 ],
                 // 'grafik_line' => $line,
+            ];
+
+            return $this->okApiResponse($result, 'Berhasil dimuat');
+        } catch (\Throwable $th) {
+
+            return $this->errorApiResponse($th->getMessage());
+        }
+    }
+
+    public function trendKasa()
+    {
+        try {
+            $awal = request('awal');
+            $akhir = request('akhir');
+
+            $trends = PinjamAlat::select([
+                DB::raw("COUNT(id) as ttl"),
+                "nama",
+                DB::raw("DATE(pinjam) as tgl_pinjam")
+            ])
+                ->whereIn("nama", ["KASSA KECIL", "KASSA BESAR"])
+                ->whereBetween("pinjam", [
+                    Carbon::createFromFormat("Y-m-d", $awal),
+                    Carbon::createFromFormat("Y-m-d", $akhir)
+                ])
+                ->where("status", PinjamAlat::SELESAI)
+                ->groupBy("nama")
+                ->groupBy("tgl_pinjam")
+                ->orderBy("tgl_pinjam")
+                ->get();
+
+            $result = [
+                'label' => $trends->pluck('tgl_pinjam'),
+                'series' => $trends->groupBy('nama')->map->pluck('ttl'),
             ];
 
             return $this->okApiResponse($result, 'Berhasil dimuat');

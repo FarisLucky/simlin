@@ -51,7 +51,8 @@ class HDaftarController extends Controller
                 // SEARCH GLOBALLY
                 ->when(!is_null($search), function ($query) use ($search) {
                     $query->orWhereHas('linenDetail', function ($query) use ($search) {
-                        $query->where('nama', 'LIKE', "%$search%");
+                        $query->where('nama', 'LIKE', "%$search%")
+                            ->orWhere('pengajuan', 'LIKE', "%$search%");
                     })
                         ->orWhereHas('unit', function ($query) use ($search) {
                             $query->where('nama', 'LIKE', "%$search%");
